@@ -16,9 +16,9 @@ def load_targets(filename = 'example_targets.dat'):
   '''
   data = ascii.read(filename, format='fixed_width_two_line')
   
-  targets = Table(names=('name', 'ra', 'dec'), dtype=('S8','S20','S20'))
+  targets = Table(names=('full_name', 'name', 'ra', 'dec'), dtype=('S50','S8','S20','S20'))
   
-  name_dict = {}
+  #name_dict = {}
   dupes = {}
   
   for row in data:
@@ -47,12 +47,12 @@ def load_targets(filename = 'example_targets.dat'):
     if short_name[-1] == 'C': #if the source name ends in "C" atmos interprets this as a calibrator
       short_name = short_name[:7] + 'c'
     
-    name_dict[short_name] = name
+    #name_dict[short_name] = name
     
-    targets.add_row([short_name, ra_str, dec_str])
+    targets.add_row([name, short_name, ra_str, dec_str])
   
   
-  return targets, name_dict
+  return targets
 
 
 def shorten_name(name):
@@ -82,7 +82,7 @@ def output_file(target_list, outfile):
   :param target_list: An astropy table, the name, RA and Dec of the targets
   :param outfile: File to output to
   '''
-  ascii.write(target_list,outfile, format='no_header')
+  ascii.write(target_list,outfile, format='no_header', exclude_names=['full_name'])
   return
 
 
@@ -175,7 +175,7 @@ def event_response(event_code):
   sched_fname = '%s.sch'%(event_code)
   
 
-  target_list, name_dict = load_targets(filename=galaxy_list_fname)
+  target_list = load_targets(filename=galaxy_list_fname)
   
   make_mosfile(target_list, mos_fname)
   
