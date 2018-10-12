@@ -26,9 +26,9 @@ def load_targets(filename = 'example_targets.dat'):
     ra = row['ra']
     dec = row['dec']
     
-    ####NOTE: astropy reads the table and ignores the minus signs in front of the Declination. This ****needs**** to be fixed.
+    ####NOTE: astropy reads the table and ignores the minus signs in front of the Declination and the 1 in fron of the RA. This ****needs**** to be fixed.
     
-    c = SkyCoord(float(ra), -1*float(dec), unit='deg') 
+    c = SkyCoord(float(ra)+100, -1*float(dec), unit='deg') 
     
     
     ra_str = c.ra.to_string(unit=u.hour, sep=':')
