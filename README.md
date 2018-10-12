@@ -1,1 +1,1 @@
-# LIGO-ATCA-follow-up
+# LIGO-VAST-follow-up
