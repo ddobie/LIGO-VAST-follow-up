@@ -4,7 +4,8 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 import numpy as np
 from string import ascii_lowercase
-#import cabb_scheduler as cabb
+import cabb_scheduler as cabb
+import os
 
 
 #from mirexec import TaskBase
@@ -98,14 +99,9 @@ def make_mosfile(target_list, mosfile, cycles=6, tempfile='temp_list.dat'):
 
   output_file(target_list, tempfile)
   
-  ####Need to get Miriad-Python running properly
   
-  #t = TaskATMOS(source=tempfile, out=mosfile, cycles=cycles)
-  #t.run ()
+  os.system("atmos source='%s' out='%s' cycles=%d"%(tempfile, mosfile, cycles))
   
-  '''
-  In the meantime, you can run atmos from terminal using "atmos source='temp_list.dat' out='mosfile.mos' cycles=6
-  '''
   
   '''
   Need to work out some way to include calibrators in the mosaic. Get them automatically using Jamie's cabb python module? Or split the mosaic into parts? Do we need more than one phase calibrator?
@@ -114,11 +110,11 @@ def make_mosfile(target_list, mosfile, cycles=6, tempfile='temp_list.dat'):
   
   return
   
-def choose_phase_calibrator(RA, Dec, freq1=5500, freq2=9000, project='C3278', ):
+def choose_phase_calibrator(RA, Dec, freq1=5500, freq2=9000, project='C3278'):
   schedule = cabb.schedule()
   
   scan = schedule.addScan(
-    { 'source': "placeholder", 'rightAscension': RA, 'declination': Dec,
+    { 'source': "dummy", 'rightAscension': RA, 'declination': Dec,
       'freq1': freq1, 'freq2': freq2, 'project': project, 'scanLength': "00:20:00", 'scanType': "Dwell" })
   
   calList = scan.findCalibrator()
@@ -136,11 +132,11 @@ if __name__ == '__main__':
   
   print(target_list[0])
   
-  #choose_phase_calibrator(target_list[0]['ra'], target_list[0]['dec'])
+  choose_phase_calibrator(target_list[0]['ra'], target_list[0]['dec'])
 
 
 
-#  make_mosfile(target_list, 'mosaicfile.mos')
+  make_mosfile(target_list, 'mosaicfile.mos')
   
   
   
