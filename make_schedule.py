@@ -14,11 +14,12 @@ def load_targets(filename = 'example_targets.dat'):
   :param filename: a string, the name of the file containing the list of host galaxies
   
   '''
-  data = ascii.read(filename, format='fixed_width_two_line')
+  
+  ### This probably needs to be improved - it works for the test case but who knows if it'll work for all
+  data = ascii.read(filename, guess=False, format='fixed_width_two_line')
   
   targets = Table(names=('full_name', 'name', 'ra', 'dec'), dtype=('S50','S8','S20','S20'))
   
-  #name_dict = {}
   dupes = {}
   
   for row in data:
@@ -26,10 +27,8 @@ def load_targets(filename = 'example_targets.dat'):
     ra = row['ra']
     dec = row['dec']
     
-    ####NOTE: astropy reads the table and ignores the minus signs in front of the Declination and the 1 in fron of the RA. This ****needs**** to be fixed.
-    
-    c = SkyCoord(float(ra)+100, -1*float(dec), unit='deg') 
-    
+    c = SkyCoord(float(ra), float(dec), unit='deg') 
+    print(c)
     
     ra_str = c.ra.to_string(unit=u.hour, sep=':')
     dec_str = c.dec.to_string(sep=':')
@@ -46,8 +45,6 @@ def load_targets(filename = 'example_targets.dat'):
     
     if short_name[-1] == 'C': #if the source name ends in "C" atmos interprets this as a calibrator
       short_name = short_name[:7] + 'c'
-    
-    #name_dict[short_name] = name
     
     targets.add_row([name, short_name, ra_str, dec_str])
   
