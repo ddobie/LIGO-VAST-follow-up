@@ -2,7 +2,6 @@ import os
 import make_schedule
 
 def get_source_images(target, survey_list, pixels=512, folder='./'):
-  print(type(target))
   '''
   Download postagestamp images of targets from SkyView
   
