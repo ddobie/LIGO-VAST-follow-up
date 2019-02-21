@@ -55,5 +55,5 @@ if __name__ == '__main__':
   target_list = make_schedule.load_targets('G298048_galaxies.dat')
   
   survey_list = get_surveys()
-  survey_list = ['VLA FIRST (1.4 GHz)']
+  
   process_target_list(target_list, survey_list, folder='test_images/')
