@@ -98,6 +98,8 @@ def make_mosfile(target_list, mosfile, cycles=6, tempfile='temp_list.dat'):
   
   os.system("atmos source='%s' out='%s' cycles=%d"%(tempfile, mosfile, cycles))
   
+  os.remove(tempfile)
+  
   return
 
 
@@ -186,7 +188,6 @@ def split_mos_file(event_code, target_list, grouping):
   
   master_mos = '%sm.mos'%(event_code)
   
-  
   mos_list = ascii.read(master_mos, format='no_header', data_start=0)
   short_names = mos_list['col4']
   
@@ -204,6 +205,8 @@ def split_mos_file(event_code, target_list, grouping):
     mos_fname = '%s_%d.mos'%(event_code,i)
     make_mosfile(targets, mos_fname)
     mosfiles.append(mos_fname)
+    
+  os.remove(master_mos)
   
   return mosfiles
 
