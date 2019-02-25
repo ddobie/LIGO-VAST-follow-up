@@ -144,7 +144,6 @@ def make_sched_file(mosfiles, schedfile, calibrator, freq1=5500, freq2=9000, pro
       'freq1': freq1, 'freq2': freq2, 'project': project, 'scanLength': '00:01:00', 'scanType': 'Mosaic', 'observer': observer}) #set scanLength to 1 minute, because the mosaic will loop at least once
   
     if i % 2 == 0:
-      print(i)
       calScan = schedule.addCalibrator(calibrator['calibrator'], mos_scan, { 'scanLength': cal_scan_length, 'scanType': 'Dwell'}) #need to change the scanType to Dwell, or it uses same as previous scan (mosaic)
   
   
@@ -214,7 +213,7 @@ def find_calibrator(master_mos):
   
   :param master_mos: A string, the filename of the master mosaic file
   
-  ''''
+  '''
 
   ref_ra, ref_dec = extract_ref_pos(master_mos)
   
@@ -262,5 +261,4 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
   make_sched_file(mosfiles, sched_fname, calibrator, observer=observer)
 
 if __name__ == '__main__':
-#  respond('G298048')
   event_response('G298048')
