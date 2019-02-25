@@ -206,7 +206,6 @@ def split_mos_file(event_code, target_list, grouping):
     make_mosfile(targets, mos_fname)
     mosfiles.append(mos_fname)
     
-  os.remove(master_mos)
   
   return mosfiles
 
@@ -262,6 +261,8 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
     calibrator = find_calibrator(mos_fname)
   
   make_sched_file(mosfiles, sched_fname, calibrator, observer=observer)
+  
+  os.remove(mos_fname)
 
 if __name__ == '__main__':
   event_response('G298048')
