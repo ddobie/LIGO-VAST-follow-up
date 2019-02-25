@@ -62,7 +62,7 @@ def shorten_name(name):
 
   short_name = name.strip()
   
-  chars = ['2MASX', 'GALEXASC', 'HIPASS', 'WINGS', 'ESO', '[', ']', ' '] 
+  chars = ['2MASX', 'GALEXASC', 'HIPASS', 'WINGS', 'ESO', '[', ']', ' ', '.'] 
 
   for char in chars:
     short_name = short_name.replace(char, '')
@@ -145,7 +145,7 @@ def make_sched_file(mosfiles, schedfile, calibrator, freq1=5500, freq2=9000, pro
     { 'source': mosfile.split('.')[0], 'rightAscension': ref_ra, 'declination': ref_dec,
       'freq1': freq1, 'freq2': freq2, 'project': project, 'scanLength': '00:01:00', 'scanType': 'Mosaic', 'observer': observer}) #set scanLength to 1 minute, because the mosaic will loop at least once
   
-    if i % 2 == 0:
+    if i % 2 == 0 and i < len(mosfiles)-1:
       calScan = schedule.addCalibrator(calibrator['calibrator'], mos_scan, { 'scanLength': cal_scan_length, 'scanType': 'Dwell'}) #need to change the scanType to Dwell, or it uses same as previous scan (mosaic)
   
   
@@ -247,7 +247,7 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
   galaxy_list_fname = '%s_galaxies.dat'%(event_code)
   mos_fname = '%sm.mos'%(event_code)
   sched_fname = '%s.sch'%(event_code)  
-
+  
   target_list = load_targets(filename=galaxy_list_fname)
   num_gal = len(target_list)
   
@@ -263,6 +263,7 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
   make_sched_file(mosfiles, sched_fname, calibrator, observer=observer)
   
   os.remove(mos_fname)
+  os.remove('ref.txt')
 
 if __name__ == '__main__':
   event_response('G298048')
