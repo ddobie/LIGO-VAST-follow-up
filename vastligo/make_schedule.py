@@ -16,7 +16,7 @@ def load_targets(filename = 'example_targets.dat'):
   '''
   
   ### This probably needs to be improved - it works for the test case but who knows if it'll work for all
-  data = ascii.read(filename, guess=False, format='fixed_width_two_line')
+  data = ascii.read(filename)
   
   targets = Table(names=('full_name', 'name', 'ra', 'dec'), dtype=('S50','S8','S20','S20'))
   
