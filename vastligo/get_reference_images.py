@@ -1,7 +1,8 @@
 import os
-import make_schedule
+from astroquery.skyview import SkyView
+import urllib.request
 
-def get_source_images(target, survey_list, pixels=512, folder='./'):
+def get_source_images(target, survey_list, pixels=512, folder='./', verbose=False):
   '''
   Download postagestamp images of targets from SkyView
   
@@ -9,15 +10,23 @@ def get_source_images(target, survey_list, pixels=512, folder='./'):
   :param survey_list: A list of strings containing survey names
   :param pixels: An integer, the dimensions of the requested (square) image
   :param folder: A string, the location where downloaded images should be saved
+  :param verbose: A boolean, determine whether or not to print errors
   
   '''
-  for survey in survey_list:
-    outfile = "%s%s.%s.fits"%(folder, target['full_name'], survey)
-    outfile = outfile.replace(' ','_').replace('(','').replace(')','')
+  
+  paths = SkyView.get_image_list(position='%s, %s'%(target['ra'], target['dec']), survey=survey_list) # can't use get_image() because it throws errors when files don't exist
+  
+  for survey, path in zip(survey_list, paths):
+    filepath = "%s%s_%s.fits"%(folder,target['full_name'], survey)
+    filepath = filepath.replace(' ','_')
     
-    command_str = "perl skvbatch_wget.pl file='%s' position='%s, %s' Survey='%s' pixels=%d " % (outfile, target['ra'], target['dec'], survey, pixels)
+    try:
+      urllib.request.urlretrieve(path,filepath)
+    except urllib.error.HTTPError:
+      if verbose:
+        print("%s not in %s"%(target['full_name'], survey))
+      pass
     
-    os.system(command_str)
 
 
 def process_target_list(targets, survey_list, folder='./', verbose=True):
