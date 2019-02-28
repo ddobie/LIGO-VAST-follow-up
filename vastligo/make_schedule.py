@@ -176,13 +176,14 @@ def calc_grouping(num_gal, time_per_gal, time_between_cal):
   
     
   
-def split_mos_file(event_code, target_list, grouping):
+def split_mos_file(event_code, target_list, grouping, obfuscate=True):
   '''
   Split the master mosaic file into multiple smaller mosaic files
   
   :param event_code: A string, the LIGO code for the GW event
   :param target_list: An astropy table, the name, RA and Dec of the targets
   :param grouping: A numpy array, containing the number of galaxies to include in each mosaic file
+  :param obfuscate: A boolean, whether to include galaxy names in sched files
   
   '''
   
@@ -195,6 +196,10 @@ def split_mos_file(event_code, target_list, grouping):
   
   for i,name in enumerate(short_names):
     row = np.where(target_list['name'] == name[1:])[0][0]
+    print(row)
+    if obfuscate:
+      target_list['name'][row] = 'FIELD_%d'%(i)
+    
     sorted_targets.add_row(target_list[row])
 
   mosfiles = []
@@ -231,7 +236,7 @@ def find_calibrator(master_mos):
   return bestCal
   
 
-def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, time_per_gal = 1.5*u.min, calibrator=None):
+def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, time_per_gal = 1.5*u.min, calibrator=None, obfuscate=True):
   '''
   Output mosaics and a schedule file for follow-up of a LIGO event
   
@@ -240,6 +245,7 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
   :param time_between cal: An astropy quantity, the amount of time between consecutive visits to the phase calibrator
   :param time_per_gal: An astropy quantity, the integration time per galaxy
   :param calibrator: A calibrator object, used if a pre-determined calibrator has been chosen
+  :param obfuscate: A boolean, whether to include galaxy names in sched files
   
   '''
   
@@ -255,12 +261,14 @@ def event_response(event_code, observer='DDobie', time_between_cal = 20*u.min, t
   
   grouping = calc_grouping(num_gal, time_per_gal, time_between_cal)
   
-  mosfiles = split_mos_file(event_code, target_list, grouping)
+  mosfiles = split_mos_file(event_code, target_list, grouping, obfuscate=obfuscate)
   
   if not calibrator:
     calibrator = find_calibrator(mos_fname)
   
   make_sched_file(mosfiles, sched_fname, calibrator, observer=observer)
+  
+  ascii.write(target_list,'%s_targets.dat'%(event_code))
   
   os.remove(mos_fname)
   os.remove('ref.txt')
